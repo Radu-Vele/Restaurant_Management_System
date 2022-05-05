@@ -1,5 +1,7 @@
 package businesslogic;
 
+import java.io.FileNotFoundException;
+
 /**
  * Delivery service interface
  * - Defines the main methods for administrator and client operations
@@ -9,7 +11,7 @@ public interface IDeliveryServiceProcessing {
      * Admin operation:
      * - importing products from .csv file
      */
-    void importProducts();
+    void importProducts()  throws FileNotFoundException;
 
     /**
      * Admin operation:

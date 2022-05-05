@@ -1,10 +1,12 @@
 package businesslogic;
 
 
+import dataaccess.Serializer;
+
 import java.beans.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Contains the logic for dealing with admin and client operations
@@ -17,10 +19,59 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
     private PropertyChangeSupport propertyChangeSupport;
 
-    //TODO: Add from csv using lambda expressions and stream processing
-    @Override
-    public void importProducts() {
+    public DeliveryService() {
+        orderMenuItemsMap = new LinkedHashMap<>(); //keeps the right order of the inserted order
+        menuItemsCollection = new HashSet<>(); //suitable for searching, no duplicates
+    }
 
+    /**
+     * Imports products from a csv files and populates the HashSet menuItemsCollection
+     * @throws FileNotFoundException
+     */
+    @Override
+    public void importProducts() throws FileNotFoundException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/products.csv")));
+        menuItemsCollection = reader.lines()
+                .skip(1)
+                .map(s -> {
+                    String title = "";
+                    double rating = 0;
+                    double calories = 0;
+                    double proteins = 0;
+                    double fats = 0;
+                    double sodium = 0;
+                    double price = 0;
+                    String[] wordsArray = s.split(",");
+                    int i = 0;
+                    for (String word : wordsArray) {
+                        switch (i) {
+                            case 0:
+                                title = word;
+                                break;
+                            case 1:
+                                rating = Double.parseDouble(word);
+                                break;
+                            case 2:
+                                calories= Double.parseDouble(word);
+                                break;
+                            case 3:
+                                proteins = Double.parseDouble(word);
+                                break;
+                            case 4:
+                                fats = Double.parseDouble(word);
+                                break;
+                            case 5:
+                                sodium = Double.parseDouble(word);
+                                break;
+                            case 6:
+                                price = Double.parseDouble(word);
+                                break;
+                        }
+                        i++;
+                    }
+                    return new BaseProduct(title, rating, calories, proteins, fats, sodium, price);
+                })
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -31,6 +82,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     @Override
     public void generateReport() {
         //TODO: use lambda expressions and stream processing to generate the 4 types of reports
+
     }
 
     @Override
@@ -69,16 +121,22 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     //TODO: Define Well-formed Method
 
     /**
-     * Stores the serialized data from the clas in a txt file using the data access package
+     * Stores the serialized data from the class in a txt file using the data access package
      */
-    public void saveData() {
-
+    public void saveData() throws Exception {
+        //save products set
+        Serializer<Collection<MenuItem>> serializer = new Serializer<>(this.menuItemsCollection, "menuItems.txt");
+        serializer.serialize();
     }
 
     /**
-     * Loads the information from previous orders saved in the .txt files
+     * Loads the information from previous or
+     * reders saved in the .txt files
      */
-    public void loadData() {
-
+    public Collection<MenuItem> loadData() throws IOException, ClassNotFoundException {
+        Collection<MenuItem> menuItems;
+        Serializer<Collection<MenuItem>> serializer = new Serializer<>(this.menuItemsCollection, "menuItems.txt");
+        menuItems = serializer.deserialize();
+        return menuItems;
     }
 }
