@@ -2,7 +2,10 @@ package businesslogic;
 
 import dataaccess.Serializer;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -16,27 +19,46 @@ public class LoginService {
         this.accountHolders = new HashSet<>();
     }
 
+    /**
+     * Loads data from the file accounts.txt to the data structure that stores all account holders
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public void loadData() throws IOException, ClassNotFoundException {
-        Serializer<Collection<AccountHolder>> serializer = new Serializer<>(accountHolders, "accounts.txt");
-        serializer.deserialize();
+        //if the file doesn't exist, create it
+        File file = new File("accounts.txt");
+        if(file.createNewFile()) {
+            return; //new file created;
+        }
+        else { //file already exists
+            Serializer<Collection<AccountHolder>> serializer = new Serializer<>(accountHolders, "accounts.txt");
+            accountHolders = serializer.deserialize();
+        }
     }
 
     public void addAccountHolder(AccountHolder newAccountHolder) {
         accountHolders.add(newAccountHolder);
     }
 
+    /**
+     * Saves data from the accountHolders data structure to the accounts.txt file
+     * @throws IOException
+     */
     public void saveData() throws IOException {
         Serializer<Collection<AccountHolder>> serializer = new Serializer<>(accountHolders, "accounts.txt");
         serializer.serialize();
     }
 
-    /**
-     * Search for an account holder having the same username. Password is checked if username is found.
-     * @param accountHolder
-     * @return
-     */
-    public boolean searchAccountHolder(AccountHolder accountHolder) {
-        //TODO: implement
+    public Collection<AccountHolder> getAccountHolders() {
+        return accountHolders;
+    }
+
+    public boolean searchUsername(String username) {
+        for(AccountHolder accountHolder:accountHolders) {
+            if(accountHolder.getUsername().equals(username)) {
+                return true;
+            }
+        }
         return false;
     }
 }

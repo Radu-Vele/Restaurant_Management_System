@@ -2,6 +2,9 @@ package presentation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class HomeScreen extends JFrame{
     private JPanel mainPanel;
@@ -25,6 +28,7 @@ public class HomeScreen extends JFrame{
         setTitle("Log in the application");
         homeScreenController = new HomeScreenController(this);
         noAccountYetClickButton.addActionListener(this.homeScreenController);
+        logInButton.addActionListener(this.homeScreenController);
     }
 
     public JButton getLogInButton() {
