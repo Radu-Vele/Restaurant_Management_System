@@ -19,7 +19,7 @@ public interface IDeliveryServiceProcessing {
      * Admin operation:
      * - add / edit / delete products from menu
      */
-    void manageProduct(String operation);
+    void manageProduct(String operation, MenuItem menuItem) throws Exception;
 
     /**
      * Admin operation:

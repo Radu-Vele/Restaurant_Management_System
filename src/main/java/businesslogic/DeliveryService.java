@@ -79,14 +79,14 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
 
     @Override
-    public void manageProduct(String operation) {
+    public void manageProduct(String operation, MenuItem menuItem) throws Exception{
         switch (operation) {
-            case "Add":
-
+            case "ADD":
+                addProduct(menuItem);
                 break;
-            case "Edit":
+            case "MODIFY":
                 break;
-            case "Delete":
+            case "DELETE":
                 break;
         }
     }
@@ -147,5 +147,35 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     public void loadData() throws IOException, ClassNotFoundException {
         Serializer<Collection<MenuItem>> serializer = new Serializer<>(this.menuItemsCollection, "menuItems.txt");
         menuItemsCollection = serializer.deserialize();
+    }
+
+    public void addProduct(MenuItem menuItem) throws Exception {
+        if(!menuItemsCollection.add(menuItem)) {
+            throw new Exception("A product with the same title already exists. Try to edit it");
+        }
+    }
+
+    public Collection<MenuItem> getMenuItemsCollection() {
+        return menuItemsCollection;
+    }
+
+    /**
+     * Transforms the set of menu items into a 2D string array for populating JTable
+     * @return
+     */
+    public String[][] setToTable() {
+        String[][] toReturn = new String[menuItemsCollection.size()][7];
+        int i = 0;
+        for(MenuItem menuItem : menuItemsCollection) {
+            toReturn[i][0] = menuItem.title;
+            toReturn[i][1] = Double.toString(menuItem.rating);
+            toReturn[i][2] = Double.toString(menuItem.calories);
+            toReturn[i][3] = Double.toString(menuItem.proteins);
+            toReturn[i][4] = Double.toString(menuItem.fats);
+            toReturn[i][5] = Double.toString(menuItem.sodium);
+            toReturn[i][6] = Double.toString(menuItem.price);
+            i++;
+        }
+        return toReturn;
     }
 }

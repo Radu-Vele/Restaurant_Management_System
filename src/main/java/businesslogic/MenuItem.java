@@ -14,16 +14,49 @@ public abstract class MenuItem implements Serializable {
 
     public abstract void computePrice();
 
+    /**
+     * Override equals such that we won't have products with the same name
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MenuItem menuItem = (MenuItem) o;
-        return Double.compare(menuItem.rating, rating) == 0 && Double.compare(menuItem.calories, calories) == 0 && Double.compare(menuItem.proteins, proteins) == 0 && Double.compare(menuItem.fats, fats) == 0 && Double.compare(menuItem.sodium, sodium) == 0 && Double.compare(menuItem.price, price) == 0 && title.equals(menuItem.title);
+        return title.equals(menuItem.title);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(title, rating, calories, proteins, fats, sodium, price);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public double getCalories() {
+        return calories;
+    }
+
+    public double getProteins() {
+        return proteins;
+    }
+
+    public double getFats() {
+        return fats;
+    }
+
+    public double getSodium() {
+        return sodium;
+    }
+
+    public double getPrice() {
+        return price;
     }
 }
