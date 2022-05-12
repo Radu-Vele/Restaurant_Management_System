@@ -2,6 +2,7 @@ package businesslogic;
 
 
 import dataaccess.Serializer;
+import utils.AlreadyImportedInitialProducts;
 
 import java.beans.*;
 import java.io.*;
@@ -14,8 +15,8 @@ import java.util.stream.Collectors;
  */
 public class DeliveryService implements IDeliveryServiceProcessing{
 
-    private Map<Order, Collection<MenuItem>> orderMenuItemsMap; //TODO: Choose the appropriate type of map
-    private Collection<MenuItem> menuItemsCollection; //TODO: Choose the appropriate type of collection for searching based on elements (Hash Table?)
+    private Map<Order, Collection<MenuItem>> orderMenuItemsMap;
+    private Collection<MenuItem> menuItemsCollection;
 
     private PropertyChangeSupport propertyChangeSupport;
 
@@ -29,7 +30,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
      * @throws FileNotFoundException
      */
     @Override
-    public void importProducts() throws FileNotFoundException {
+    public void importProducts() throws FileNotFoundException, AlreadyImportedInitialProducts {
+        if(!menuItemsCollection.isEmpty()) {
+            throw new AlreadyImportedInitialProducts();
+        }
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/products.csv")));
         menuItemsCollection = reader.lines()
                 .skip(1)
@@ -75,8 +79,16 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
 
     @Override
-    public void manageProduct() {
+    public void manageProduct(String operation) {
+        switch (operation) {
+            case "Add":
 
+                break;
+            case "Edit":
+                break;
+            case "Delete":
+                break;
+        }
     }
 
     @Override
@@ -130,13 +142,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
 
     /**
-     * Loads the information from previous or
-     * reders saved in the .txt files
+     * Loads the information from previous instances saved in the .txt files
      */
-    public Collection<MenuItem> loadData() throws IOException, ClassNotFoundException {
-        Collection<MenuItem> menuItems;
+    public void loadData() throws IOException, ClassNotFoundException {
         Serializer<Collection<MenuItem>> serializer = new Serializer<>(this.menuItemsCollection, "menuItems.txt");
-        menuItems = serializer.deserialize();
-        return menuItems;
+        menuItemsCollection = serializer.deserialize();
     }
 }

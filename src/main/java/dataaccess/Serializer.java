@@ -21,6 +21,12 @@ public class Serializer<T> {
         objectOutputStream.close();
     }
 
+    /**
+     * Used to read objects from txt files
+     * @return The object read of the Type specified in Serialized constructor
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public T deserialize() throws IOException, ClassNotFoundException {
         FileInputStream fileInputStream = new FileInputStream(fileName);
         ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);

@@ -1,5 +1,7 @@
 package businesslogic;
 
+import utils.AlreadyImportedInitialProducts;
+
 import java.io.FileNotFoundException;
 
 /**
@@ -11,13 +13,13 @@ public interface IDeliveryServiceProcessing {
      * Admin operation:
      * - importing products from .csv file
      */
-    void importProducts()  throws FileNotFoundException;
+    void importProducts()  throws FileNotFoundException, AlreadyImportedInitialProducts;
 
     /**
      * Admin operation:
      * - add / edit / delete products from menu
      */
-    void manageProduct();
+    void manageProduct(String operation);
 
     /**
      * Admin operation:
