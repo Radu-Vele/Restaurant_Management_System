@@ -10,22 +10,18 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Collection;
-import java.util.InputMismatchException;
-import java.util.regex.Pattern;
 
-public class AdminController implements ActionListener {
+/**
+ * Controller class for the operation that deal with adding/modifying and deleting products by the admin
+ */
+public class AdminCRUDController implements ActionListener {
     AdminWindow adminWindow;
     DeliveryService deliveryService;
 
-    public AdminController(AdminWindow adminWindow) {
+    public AdminCRUDController(AdminWindow adminWindow) {
         this.adminWindow = adminWindow;
-        deliveryService = new DeliveryService();
-        //import initial data
+        deliveryService = DeliveryService.getInstance();
         try {
             deliveryService.loadData();
         } catch (Exception e) {
@@ -149,6 +145,7 @@ public class AdminController implements ActionListener {
     }
 
     public void deleteProduct() {
+        //TODO: make it work for composite products
         try {
             MenuItem toDelete = getProductFromSelectedLine();
             if(deliveryService.getMenuItemsCollection().contains(toDelete)) {
@@ -165,7 +162,8 @@ public class AdminController implements ActionListener {
     }
 
     public void populateProductsTable() {
-        String[][] data = deliveryService.setToTable();
+        String filterString = adminWindow.getFilterTextField().getText();
+        String[][] data = deliveryService.setToTable(filterString);
         String[] columnHeadings = {"Title", "Rating", "Calories", "Protein", "Fats", "Sodium", "Price"};
         DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnHeadings);
         JTable table = adminWindow.getProductsTable();
@@ -202,6 +200,7 @@ public class AdminController implements ActionListener {
     }
 
     public void modifyProduct() {
+        //TODO: make it work for composite products
         try {
             if (adminWindow.getModifyTitleCheckBox().isSelected() && adminWindow.getNewTitleField().getText().equals("Set new title value") ||
                     adminWindow.getModifyRatingCheckBox().isSelected() && adminWindow.getNewRatingField().getText().equals("Set new rating value") ||

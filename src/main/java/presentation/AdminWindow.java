@@ -31,7 +31,7 @@ public class AdminWindow extends JFrame{
     private JButton deleteDescribedProductButton;
     private JTable productsTable;
     private JButton refreshProductsTableButton;
-    private JTextField textField1;
+    private JTextField filterTextField;
     private JCheckBox modifyTitleCheckBox;
     private JCheckBox modifyRatingCheckBox;
     private JCheckBox modifyCaloriesCheckBox;
@@ -47,7 +47,20 @@ public class AdminWindow extends JFrame{
     private JTextField newSodiumField;
     private JTextField newPriceField;
     private JScrollPane tablePane;
-    private AdminController adminController;
+    private JPanel mainMenuItemsPanel;
+    private JPanel menuWizardTab;
+    private JTable existingProductsTable;
+    private JTable chosenProductsTable;
+    private JButton refreshTableButton;
+    private JButton addSelectedItemsButton;
+    private JButton clearAllButton;
+    private JButton clearSelectedItemsButton;
+    private JButton createNewMenuItemButton;
+    private JTextField compositeTitleField;
+    private JLabel newItemSuccess;
+
+    private AdminCRUDController adminController;
+    private AdminMenuController adminMenuController;
 
     public AdminWindow() {
         setContentPane(mainPanel);
@@ -56,7 +69,8 @@ public class AdminWindow extends JFrame{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
         setTitle("Administrator operations");
-        adminController = new AdminController(this);
+        adminController = new AdminCRUDController(this);
+        adminMenuController = new AdminMenuController(this);
 
         importInitialSetOfButton.addActionListener(adminController);
         importLabel.setText("");
@@ -83,8 +97,6 @@ public class AdminWindow extends JFrame{
 
         this.successLabel.setVisible(false);
 
-        //TODO: create more controllers
-        //TODO: maybe print the existing products everytime
         modifyTitleCheckBox.addActionListener(adminController);
         modifyRatingCheckBox.addActionListener(adminController);
         modifyCaloriesCheckBox.addActionListener(adminController);
@@ -93,6 +105,13 @@ public class AdminWindow extends JFrame{
         modifySodiumCheckBox.addActionListener(adminController);
         modifyPriceCheckBox.addActionListener(adminController);
 
+        refreshTableButton.addActionListener(adminMenuController);
+        addSelectedItemsButton.addActionListener(adminMenuController);
+        clearAllButton.addActionListener(adminMenuController);
+        clearSelectedItemsButton.addActionListener(adminMenuController);
+        createNewMenuItemButton.addActionListener(adminMenuController);
+
+
         newTitleField.setVisible(false);
         newCaloriesField.setVisible(false);
         newRatingField.setVisible(false);
@@ -100,6 +119,7 @@ public class AdminWindow extends JFrame{
         newPriceField.setVisible(false);
         newProteinField.setVisible(false);
         newSodiumField.setVisible(false);
+        newItemSuccess.setVisible(false);
     }
 
     public JButton getImportInitialSetOfButton() {
@@ -252,5 +272,45 @@ public class AdminWindow extends JFrame{
 
     public JCheckBox getModifyPriceCheckBox() {
         return modifyPriceCheckBox;
+    }
+
+    public JTextField getFilterTextField() {
+        return filterTextField;
+    }
+
+    public JTable getExistingProductsTable() {
+        return existingProductsTable;
+    }
+
+    public JTable getChosenProductsTable() {
+        return chosenProductsTable;
+    }
+
+    public JButton getRefreshTableButton() {
+        return refreshTableButton;
+    }
+
+    public JButton getAddSelectedItemsButton() {
+        return addSelectedItemsButton;
+    }
+
+    public JButton getClearAllButton() {
+        return clearAllButton;
+    }
+
+    public JButton getClearSelectedItemsButton() {
+        return clearSelectedItemsButton;
+    }
+
+    public JTextField getCompositeTitleField() {
+        return compositeTitleField;
+    }
+
+    public JButton getCreateNewMenuItemButton() {
+        return createNewMenuItemButton;
+    }
+
+    public JLabel getNewItemSuccess() {
+        return newItemSuccess;
     }
 }

@@ -12,8 +12,6 @@ public abstract class MenuItem implements Serializable {
     protected double sodium;
     protected double price;
 
-    public abstract void computePrice();
-
     /**
      * Override equals such that we won't have products with the same name
      * @param o
@@ -59,4 +57,6 @@ public abstract class MenuItem implements Serializable {
     public double getPrice() {
         return price;
     }
+
+    public abstract void computeComponents();
 }

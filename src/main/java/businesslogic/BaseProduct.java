@@ -13,10 +13,6 @@ public class BaseProduct extends MenuItem{
     }
 
     @Override
-    public void computePrice() {
-    }
-
-    @Override
     public String toString() {
         return "{" +
                 "title='" + title + '\'' +
@@ -27,5 +23,10 @@ public class BaseProduct extends MenuItem{
                 ", sodium=" + sodium +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    public void computeComponents() {
+
     }
 }

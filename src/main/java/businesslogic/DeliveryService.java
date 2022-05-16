@@ -12,17 +12,31 @@ import java.util.stream.Collectors;
 /**
  * Contains the logic for dealing with admin and client operations
  * - Plays the role of an observer using the Java PropertyChangeListener implementation
+ * - Singleton
  */
 public class DeliveryService implements IDeliveryServiceProcessing{
 
     private Map<Order, Collection<MenuItem>> orderMenuItemsMap;
     private Collection<MenuItem> menuItemsCollection;
+    private Collection<MenuItem> chosenMenuItems;
 
     private PropertyChangeSupport propertyChangeSupport;
 
-    public DeliveryService() {
+    private static DeliveryService deliveryServiceInstance;
+
+
+    private DeliveryService() {
         orderMenuItemsMap = new LinkedHashMap<>(); //keeps the right order of the inserted order
         menuItemsCollection = new HashSet<>(); //suitable for searching, no duplicates
+        chosenMenuItems = new HashSet<>();
+    }
+
+    public static DeliveryService getInstance() {
+        if(deliveryServiceInstance == null) {
+            deliveryServiceInstance = new DeliveryService();
+        }
+
+        return deliveryServiceInstance;
     }
 
     /**
@@ -114,6 +128,19 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         return toReturn;
     }
 
+    public Collection<MenuItem> searchByTitle(String title) {
+        Collection<MenuItem> result;
+        if(title.equals("")) {
+            result = menuItemsCollection;
+        }
+        else {
+            result = menuItemsCollection.stream().
+                    filter(s -> s.getTitle().toLowerCase(Locale.ROOT).contains(title.toLowerCase(Locale.ROOT))).
+                    collect(Collectors.toSet());
+        }
+        return result;
+    }
+
     /**
      * Add a new listener to the observable object
      * @param propertyChangeListener Observer object to be added (Employee controller)
@@ -160,13 +187,24 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
 
     /**
-     * Transforms the set of menu items into a 2D string array for populating JTable
+     * Transforms the set of menu items filtered w.r.t. the keyword into a 2D string array for populating JTable
      * @return
      */
-    public String[][] setToTable() {
-        String[][] toReturn = new String[menuItemsCollection.size()][7];
+    public String[][] setToTable(String filteringName) {
+        Collection<MenuItem> filteredMenuItemHashSet =  searchByTitle(filteringName);
+        String[][] toReturn = returnAsTable(filteredMenuItemHashSet);
+        return toReturn;
+    }
+
+    public void addChosenItem(MenuItem menuItem) {
+        this.chosenMenuItems.add(menuItem);
+    }
+
+    public String[][] returnAsTable(Collection<MenuItem> menuItems) {
+        String[][] toReturn = new String[menuItems.size()][7];
+
         int i = 0;
-        for(MenuItem menuItem : menuItemsCollection) {
+        for(MenuItem menuItem : menuItems) {
             toReturn[i][0] = menuItem.title;
             toReturn[i][1] = Double.toString(menuItem.rating);
             toReturn[i][2] = Double.toString(menuItem.calories);
@@ -176,6 +214,26 @@ public class DeliveryService implements IDeliveryServiceProcessing{
             toReturn[i][6] = Double.toString(menuItem.price);
             i++;
         }
+
         return toReturn;
+    }
+
+    public Collection<MenuItem> getChosenMenuItems() {
+        return chosenMenuItems;
+    }
+
+    public void addCompositeProduct(String title) throws Exception{
+        CompositeProduct compositeProduct = new CompositeProduct(title);
+
+        if(chosenMenuItems.isEmpty() || chosenMenuItems.size() == 1) {
+            throw new Exception("The list of chosen items is empty! Please select two or more items to add to the menu");
+        }
+
+        for(MenuItem menuItem : chosenMenuItems) {
+            compositeProduct.getComponents().add(menuItem);
+        }
+
+        compositeProduct.computeComponents();
+        menuItemsCollection.add(compositeProduct);
     }
 }
