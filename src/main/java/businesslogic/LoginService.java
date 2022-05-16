@@ -61,4 +61,28 @@ public class LoginService {
         }
         return false;
     }
+
+    public int getNewID() {
+        if (accountHolders.size() == 0) {
+            return 1;
+        }
+        else {
+            int max = 0;
+            for(AccountHolder accountHolder: accountHolders) {
+                if(accountHolder.getID() > max) {
+                    max = accountHolder.getID();
+                }
+            }
+            return max + 1;
+        }
+    }
+
+    public AccountHolder getAccountHolderFromSet(AccountHolder accountHolder) {
+        for(AccountHolder accountHolder1 : accountHolders) {
+            if(accountHolder.getUsername().equals(accountHolder1.getUsername())) {
+                return accountHolder1;
+            }
+        }
+        return null;
+    }
 }

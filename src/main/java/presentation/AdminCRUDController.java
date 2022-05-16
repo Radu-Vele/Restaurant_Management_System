@@ -22,11 +22,6 @@ public class AdminCRUDController implements ActionListener {
     public AdminCRUDController(AdminWindow adminWindow) {
         this.adminWindow = adminWindow;
         deliveryService = DeliveryService.getInstance();
-        try {
-            deliveryService.loadData();
-        } catch (Exception e) {
-            ErrorPrompt errorPrompt = new ErrorPrompt("Error: unable to import initial data");
-        }
     }
 
     @Override

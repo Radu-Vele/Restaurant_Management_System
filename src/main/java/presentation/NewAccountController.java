@@ -36,6 +36,9 @@ public class NewAccountController implements ActionListener {
                 throw new AlreadyExistingUsername("There already exists a user having that username");
             }
 
+            //Set account holder ID based on previous existing IDs
+            accountHolder.setID(HomeScreenController.loginService.getNewID());
+
             HomeScreenController.loginService.addAccountHolder(accountHolder);
             this.newAccountWindow.getUserSuccessLabel().setVisible(true);
 

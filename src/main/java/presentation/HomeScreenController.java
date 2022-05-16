@@ -23,6 +23,8 @@ import java.util.Collections;
 public class HomeScreenController implements ActionListener {
     private HomeScreen homeScreen;
     public static LoginService loginService;
+    public static AccountHolder currentUser;
+    private DeliveryService deliveryService;
 
     public HomeScreenController(HomeScreen homeScreen) {
         this.homeScreen = homeScreen;
@@ -68,6 +70,17 @@ public class HomeScreenController implements ActionListener {
                     throw new NoSuchAccountException("There is an account linked to the username, but the selected password and/or role are wrong");
                 }
                 throw new NoSuchAccountException("There is no user having the specified combination of username, password, and role");
+            }
+
+            //setting the "global user"
+            currentUser = loginService.getAccountHolderFromSet(accountHolder);
+
+            //loadInitialData
+            deliveryService = DeliveryService.getInstance();
+            try {
+                deliveryService.loadData();
+            } catch (Exception e) {
+                ErrorPrompt errorPrompt = new ErrorPrompt("Error: unable to import initial data");
             }
 
             switch (accountHolder.getRole()) {

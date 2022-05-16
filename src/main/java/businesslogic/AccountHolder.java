@@ -7,11 +7,20 @@ public class AccountHolder implements Serializable {
     private String username;
     private String password;
     private String role;
+    private int ID;
 
     public AccountHolder(String username, String password, String role) {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     /**

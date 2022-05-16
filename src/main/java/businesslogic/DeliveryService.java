@@ -19,6 +19,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     private Map<Order, Collection<MenuItem>> orderMenuItemsMap;
     private Collection<MenuItem> menuItemsCollection;
     private Collection<MenuItem> chosenMenuItems;
+    private Collection<MenuItem> orderedMenuItems;
 
     private PropertyChangeSupport propertyChangeSupport;
 
@@ -29,6 +30,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         orderMenuItemsMap = new LinkedHashMap<>(); //keeps the right order of the inserted order
         menuItemsCollection = new HashSet<>(); //suitable for searching, no duplicates
         chosenMenuItems = new HashSet<>();
+        orderedMenuItems = new HashSet<>();
     }
 
     public static DeliveryService getInstance() {
@@ -101,6 +103,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
             case "MODIFY":
                 break;
             case "DELETE":
+                //TODO: arrange
                 break;
         }
     }
@@ -111,35 +114,35 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
     }
 
+    /**
+     *
+     */
     @Override
     public void createNewOrder() {
         //TODO: generate bill
     }
 
-    /**
-     * Search method for a menu item based on generic criterion
-     * TODO: Uses lambda functions and stream processing
-     * @param criterion
-     * @param <T>
-     * @return
-     */
-    public <T> MenuItem searchBy(T criterion) {
-        MenuItem toReturn = null;
-        return toReturn;
-    }
-
-    public Collection<MenuItem> searchByTitle(String title) {
+    public Collection<MenuItem> filterByTitle(Collection<MenuItem> menuItems, String title) {
         Collection<MenuItem> result;
         if(title.equals("")) {
-            result = menuItemsCollection;
+            result = menuItems;
         }
         else {
-            result = menuItemsCollection.stream().
+            result = menuItems.stream().
                     filter(s -> s.getTitle().toLowerCase(Locale.ROOT).contains(title.toLowerCase(Locale.ROOT))).
                     collect(Collectors.toSet());
         }
         return result;
     }
+
+    public Collection<MenuItem> filterByRating(Collection<MenuItem> menuItems, double rating) {
+        Collection<MenuItem> result = menuItems.stream().
+                filter(s -> s.getRating() >= rating).
+                collect(Collectors.toSet());
+        return result;
+    }
+
+
 
     /**
      * Add a new listener to the observable object
@@ -191,7 +194,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
      * @return
      */
     public String[][] setToTable(String filteringName) {
-        Collection<MenuItem> filteredMenuItemHashSet =  searchByTitle(filteringName);
+        Collection<MenuItem> filteredMenuItemHashSet =  filterByTitle(menuItemsCollection, filteringName);
         String[][] toReturn = returnAsTable(filteredMenuItemHashSet);
         return toReturn;
     }
