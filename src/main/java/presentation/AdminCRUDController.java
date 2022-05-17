@@ -61,9 +61,10 @@ public class AdminCRUDController implements ActionListener {
         }
     }
 
-    public void closingRoutine() {
+    public static void closingRoutine() {
         try {
-            this.deliveryService.saveData();
+            DeliveryService deliveryService = DeliveryService.getInstance();
+            deliveryService.saveData();
         } catch (Exception e) {
             ErrorPrompt errorPrompt = new ErrorPrompt("Error: Unable to save the existing data in the menu");
         }

@@ -30,6 +30,19 @@ public abstract class MenuItem implements Serializable {
         return Objects.hash(title, rating, calories, proteins, fats, sodium, price);
     }
 
+    @Override
+    public String toString() {
+        return "MenuItem{" +
+                "title='" + title + '\'' +
+                ", rating=" + rating +
+                ", calories=" + calories +
+                ", proteins=" + proteins +
+                ", fats=" + fats +
+                ", sodium=" + sodium +
+                ", price=" + price +
+                '}';
+    }
+
     public String getTitle() {
         return title;
     }

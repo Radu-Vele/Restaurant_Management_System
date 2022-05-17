@@ -1,6 +1,8 @@
 package presentation;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ClientWindow extends JFrame{
     private JPanel mainPanel;
@@ -31,6 +33,7 @@ public class ClientWindow extends JFrame{
     private JButton addMoreItemsButton;
     private JButton deleteSelectedProductButton;
     private JButton addSelectedButton;
+    private JLabel priceLabel;
     private ClientController clientController;
 
     public ClientWindow() {
@@ -47,6 +50,18 @@ public class ClientWindow extends JFrame{
         goToCartButton.addActionListener(clientController);
         addMoreItemsButton.addActionListener(clientController);
         searchButton.addActionListener(clientController);
+        addSelectedButton.addActionListener(clientController);
+        discardOrderButton.addActionListener(clientController);
+        deleteSelectedProductButton.addActionListener(clientController);
+        finishOrderButton.addActionListener(clientController);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                AdminCRUDController.closingRoutine();
+                dispose();
+            }
+        });
     }
 
     public JPanel getSearchAndOrderPanel() {
@@ -155,5 +170,13 @@ public class ClientWindow extends JFrame{
 
     public ClientController getClientController() {
         return clientController;
+    }
+
+    public JButton getAddSelectedButton() {
+        return addSelectedButton;
+    }
+
+    public JLabel getPriceLabel() {
+        return priceLabel;
     }
 }

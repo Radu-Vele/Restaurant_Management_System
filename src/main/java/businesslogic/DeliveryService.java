@@ -2,8 +2,14 @@ package businesslogic;
 
 
 import dataaccess.Serializer;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import presentation.HomeScreenController;
 import utils.AlreadyImportedInitialProducts;
 
+import java.awt.*;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
@@ -111,15 +117,24 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     @Override
     public void generateReport() {
         //TODO: use lambda expressions and stream processing to generate the 4 types of reports
-
     }
 
     /**
-     *
+     * Creates a new order based on the chosen products
      */
     @Override
-    public void createNewOrder() {
-        //TODO: generate bill
+    public void createNewOrder(int clientID) throws Exception{
+        if(orderedMenuItems.isEmpty()) {
+            throw new Exception("Error! You must select at least an item to create an order");
+        }
+
+        int orderID = orderMenuItemsMap.size() + 1; //order ID computation
+
+        Order newOrder = new Order(orderID, clientID);
+
+        orderMenuItemsMap.put(newOrder, orderedMenuItems);
+
+        generateBill(newOrder, orderedMenuItems);
     }
 
     public Collection<MenuItem> filterByTitle(Collection<MenuItem> menuItems, String title) {
@@ -135,13 +150,56 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         return result;
     }
 
-    public Collection<MenuItem> filterByRating(Collection<MenuItem> menuItems, double rating) {
-        Collection<MenuItem> result = menuItems.stream().
-                filter(s -> s.getRating() >= rating).
-                collect(Collectors.toSet());
+    /**
+     *
+     * @param menuItems
+     * @param value
+     * @return
+     */
+    public Collection<MenuItem> filterGreaterThanDouble(Collection<MenuItem> menuItems, double value, String argument) {
+        Collection<MenuItem> result = null;
+        switch (argument) {
+            case "RATING" :
+                result = menuItems.stream().
+                        filter(s -> s.getRating() >= value).
+                        collect(Collectors.toSet());
+                break;
+            case "PROTEIN" :
+                result = menuItems.stream().
+                        filter(s -> s.getProteins() >= value).
+                        collect(Collectors.toSet());
+                break;
+
+                case "CALORIES" :
+                    result = menuItems.stream().
+                            filter(s -> s.getCalories() >= value).
+                            collect(Collectors.toSet());
+                    break;
+        }
+
         return result;
     }
 
+    public Collection<MenuItem> filterLessThanDouble(Collection<MenuItem> menuItems, double value, String argument) {
+        Collection<MenuItem> result = null;
+        switch(argument) {
+            case "PRICE" :
+                result = menuItems.stream().
+                        filter(s -> s.getPrice() <= value).
+                        collect(Collectors.toSet());
+                break;
+            case "FATS" :
+                result = menuItems.stream().
+                        filter(s -> s.getFats() <= value).
+                        collect(Collectors.toSet());
+                break;
+            case "SODIUM" :
+                result = menuItems.stream().filter(s -> s.getSodium() <= value).collect(Collectors.toSet());
+
+        }
+
+        return result;
+    }
 
 
     /**
@@ -166,9 +224,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
      * Stores the serialized data from the class in a txt file using the data access package
      */
     public void saveData() throws Exception {
-        //save products set
         Serializer<Collection<MenuItem>> serializer = new Serializer<>(this.menuItemsCollection, "menuItems.txt");
         serializer.serialize();
+        Serializer<Map<Order, Collection<MenuItem>>> serializer1 = new Serializer<>(this.orderMenuItemsMap, "orders.txt");
+        serializer1.serialize();
     }
 
     /**
@@ -177,6 +236,8 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     public void loadData() throws IOException, ClassNotFoundException {
         Serializer<Collection<MenuItem>> serializer = new Serializer<>(this.menuItemsCollection, "menuItems.txt");
         menuItemsCollection = serializer.deserialize();
+        Serializer<Map<Order, Collection<MenuItem>>> serializer1 = new Serializer<>(this.orderMenuItemsMap, "orders.txt");
+        orderMenuItemsMap = serializer1.deserialize();
     }
 
     public void addProduct(MenuItem menuItem) throws Exception {
@@ -203,6 +264,11 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         this.chosenMenuItems.add(menuItem);
     }
 
+    /**
+     * Returns the given collection of menu items as a 2D matrix of Strings (in order to be able to display as table)
+     * @param menuItems
+     * @return
+     */
     public String[][] returnAsTable(Collection<MenuItem> menuItems) {
         String[][] toReturn = new String[menuItems.size()][7];
 
@@ -239,4 +305,81 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         compositeProduct.computeComponents();
         menuItemsCollection.add(compositeProduct);
     }
+
+    public Collection<MenuItem> getOrderedMenuItems() {
+        return orderedMenuItems;
+    }
+
+    public double computeOrderPrice() {
+        double price = 0;
+        for(MenuItem menuItem : orderedMenuItems) {
+            price += menuItem.price;
+        }
+        return price;
+    }
+
+    /**
+     * Generates PDF bill for the given order
+     * @param order
+     */
+    public void generateBill(Order order, Collection<MenuItem> menuItems) {
+        try {
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage();
+            document.addPage(page);
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            contentStream.beginText();
+
+            contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
+
+            contentStream.setLeading(14.5f);
+            contentStream.newLineAtOffset(25, 700);
+
+            String line1 = "The details of your order:";
+            contentStream.showText(line1);
+            contentStream.newLine();
+
+            String dashed_line = "------------------------------------";
+            contentStream.showText(dashed_line);
+            contentStream.newLine();
+            contentStream.newLine();
+
+            String line2 = "Order ID: " + Integer.toString(order.getOrderID());
+            contentStream.showText(line2);
+            contentStream.newLine();
+
+            String line3 = "Customer Username: " + HomeScreenController.currentUser.getUsername();
+            contentStream.showText(line3);
+            contentStream.newLine();
+
+            String line4 = "Order Price: " + computeOrderPrice();
+            contentStream.showText(line4);
+            contentStream.newLine();
+
+            contentStream.newLine();
+            contentStream.showText(dashed_line);
+            contentStream.newLine();
+
+            String line5 = "Ordered Menu Products:";
+            contentStream.showText(line5);
+            contentStream.newLine();
+
+            for(MenuItem menuItem : menuItems) {
+                contentStream.showText(menuItem.getTitle());
+                contentStream.newLine();
+            }
+
+            contentStream.endText();
+            contentStream.close();
+
+            document.save("Receipt_" + order.getOrderID() + "_" + order.getOrderDate().getTime() + ".pdf");
+            document.close();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 }

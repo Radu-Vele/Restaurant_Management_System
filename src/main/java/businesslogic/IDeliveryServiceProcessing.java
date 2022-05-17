@@ -33,7 +33,7 @@ public interface IDeliveryServiceProcessing {
      * - uses an algorithm for computing the price
      * - generates a bill in a .txt file
      */
-    void createNewOrder();
+    void createNewOrder(int clientID) throws Exception;
 
     //TODO: design by contract - pre, post conditions => assert for implementing DeliveryService
     //TODO: custom javaDoc tags

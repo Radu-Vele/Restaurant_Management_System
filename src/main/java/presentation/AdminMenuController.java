@@ -99,7 +99,7 @@ public class AdminMenuController implements ActionListener {
 
     }
 
-    public MenuItem[] getBaseProductsAtSelection(JTable table, int[] selectedRows) throws Exception {
+    public static MenuItem[] getBaseProductsAtSelection(JTable table, int[] selectedRows) throws Exception {
         if (selectedRows.length == 0) {
             throw new Exception("Error! you must select at least an item");
         }

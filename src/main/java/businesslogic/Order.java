@@ -2,12 +2,19 @@ package businesslogic;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 public class Order implements Serializable {
     private int orderID;
     private int clientID;
-    private String orderDate;
+    private Date orderDate;
+
+    public Order(int orderID, int clientID) {
+        this.orderID = orderID;
+        this.clientID = clientID;
+        this.orderDate = new Date();
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -25,5 +32,13 @@ public class Order implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(orderID, clientID, orderDate);
+    }
+
+    public int getOrderID() {
+        return orderID;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
     }
 }
