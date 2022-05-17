@@ -51,9 +51,7 @@ public class ClientController implements ActionListener {
         }
         else if(e.getSource().equals(clientWindow.getFinishOrderButton())) {
             finishOrder();
-            clearAllOrderItems();
-            populateChosenProductTable();
-            computePrice();
+            //TODO: make it work to make multiple orders in one instance
         }
     }
 

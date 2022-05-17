@@ -38,6 +38,10 @@ public class Order implements Serializable {
         return orderID;
     }
 
+    public int getClientID() {
+        return clientID;
+    }
+
     public Date getOrderDate() {
         return orderDate;
     }

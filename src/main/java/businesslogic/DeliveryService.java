@@ -2,10 +2,12 @@ package businesslogic;
 
 
 import dataaccess.Serializer;
+import jdk.jfr.Event;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import presentation.EmployeeController;
 import presentation.HomeScreenController;
 import utils.AlreadyImportedInitialProducts;
 
@@ -26,8 +28,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     private Collection<MenuItem> menuItemsCollection;
     private Collection<MenuItem> chosenMenuItems;
     private Collection<MenuItem> orderedMenuItems;
+    private Map<Order, Collection<MenuItem>> ordersToDeliver;
 
     private PropertyChangeSupport propertyChangeSupport;
+    private PropertyChangeListener propertyChangeListener;
 
     private static DeliveryService deliveryServiceInstance;
 
@@ -37,6 +41,8 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         menuItemsCollection = new HashSet<>(); //suitable for searching, no duplicates
         chosenMenuItems = new HashSet<>();
         orderedMenuItems = new HashSet<>();
+        ordersToDeliver = new HashMap<>();
+        propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     public static DeliveryService getInstance() {
@@ -133,8 +139,14 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         Order newOrder = new Order(orderID, clientID);
 
         orderMenuItemsMap.put(newOrder, orderedMenuItems);
+        ordersToDeliver.put(newOrder, orderedMenuItems);
 
         generateBill(newOrder, orderedMenuItems);
+
+        //TODO: add to ordersToDeliver
+        String name = "name";
+        Integer oldValue = 0;
+        propertyChangeSupport.firePropertyChange("added order", this.ordersToDeliver, newOrder);
     }
 
     public Collection<MenuItem> filterByTitle(Collection<MenuItem> menuItems, String title) {
@@ -210,14 +222,6 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         propertyChangeSupport.addPropertyChangeListener(propertyChangeListener);
     }
 
-    /**
-     * Removes the listener specified as parameter from the observable object
-     * @param propertyChangeListener Observer object to be removed (Employee controller)
-     */
-    public void removeListener(PropertyChangeListener propertyChangeListener) {
-        propertyChangeSupport.removePropertyChangeListener(propertyChangeListener);
-    }
-
     //TODO: Define Well-formed Method
 
     /**
@@ -228,6 +232,8 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         serializer.serialize();
         Serializer<Map<Order, Collection<MenuItem>>> serializer1 = new Serializer<>(this.orderMenuItemsMap, "orders.txt");
         serializer1.serialize();
+        Serializer<Map<Order, Collection<MenuItem>>> serializer2 = new Serializer<>(this.ordersToDeliver, "ordersToDeliver.txt");
+        serializer2.serialize();
     }
 
     /**
@@ -238,6 +244,9 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         menuItemsCollection = serializer.deserialize();
         Serializer<Map<Order, Collection<MenuItem>>> serializer1 = new Serializer<>(this.orderMenuItemsMap, "orders.txt");
         orderMenuItemsMap = serializer1.deserialize();
+        Serializer<Map<Order, Collection<MenuItem>>> serializer2 = new Serializer<>(this.ordersToDeliver, "ordersToDeliver.txt");
+        ordersToDeliver = serializer2.deserialize();
+
     }
 
     public void addProduct(MenuItem menuItem) throws Exception {
@@ -382,4 +391,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         }
     }
 
+    public Map<Order, Collection<MenuItem>> getOrdersToDeliver() {
+        return ordersToDeliver;
+    }
 }
