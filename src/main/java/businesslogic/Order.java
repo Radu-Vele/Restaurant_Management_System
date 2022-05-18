@@ -21,7 +21,7 @@ public class Order implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return orderID == order.orderID && clientID == order.clientID && orderDate.equals(order.orderDate);
+        return orderID == order.orderID && clientID == order.clientID;
     }
 
     /**
