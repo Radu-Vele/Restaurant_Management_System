@@ -1,6 +1,7 @@
 package presentation;
 
 import businesslogic.BaseProduct;
+import businesslogic.CompositeProduct;
 import businesslogic.DeliveryService;
 import businesslogic.MenuItem;
 import utils.AlreadyImportedInitialProducts;
@@ -147,8 +148,14 @@ public class AdminCRUDController implements ActionListener {
             if(deliveryService.getMenuItemsCollection().contains(toDelete)) {
                 deliveryService.getMenuItemsCollection().remove(toDelete);
             }
-            else
-                throw new Exception("Error! The item you want to delete is not in the menu anymore. Try to refresh the table!");
+            else {
+                CompositeProduct dummyComposite = new CompositeProduct(toDelete.getTitle());
+                if(deliveryService.getMenuItemsCollection().contains(dummyComposite)) {
+                    deliveryService.getMenuItemsCollection().remove(dummyComposite);
+                }
+                else
+                    throw new Exception("Error! The item you want to delete is not in the menu anymore. Try to refresh the table!");
+            }
             adminWindow.getSuccessLabel().setVisible(true);
         } catch (Exception e) {
             ErrorPrompt errorPrompt = new ErrorPrompt(e.getMessage());
@@ -196,7 +203,6 @@ public class AdminCRUDController implements ActionListener {
     }
 
     public void modifyProduct() {
-        //TODO: make it work for composite products
         try {
             if (adminWindow.getModifyTitleCheckBox().isSelected() && adminWindow.getNewTitleField().getText().equals("Set new title value") ||
                     adminWindow.getModifyRatingCheckBox().isSelected() && adminWindow.getNewRatingField().getText().equals("Set new rating value") ||
@@ -218,33 +224,39 @@ public class AdminCRUDController implements ActionListener {
             double rating = dummy.getRating();
             double price = dummy.getPrice();
 
-            if(adminWindow.getModifyTitleCheckBox().isSelected()) {
+            if (adminWindow.getModifyTitleCheckBox().isSelected()) {
                 productTitle = adminWindow.getNewTitleField().getText();
             }
-            if(adminWindow.getModifyCaloriesCheckBox().isSelected()) {
+            if (adminWindow.getModifyCaloriesCheckBox().isSelected()) {
                 calories = Double.parseDouble(adminWindow.getNewCaloriesField().getText());
             }
-            if(adminWindow.getModifyRatingCheckBox().isSelected()) {
+            if (adminWindow.getModifyRatingCheckBox().isSelected()) {
                 rating = Double.parseDouble(adminWindow.getNewRatingField().getText());
             }
-            if(adminWindow.getModifyProteinCheckBox().isSelected()) {
+            if (adminWindow.getModifyProteinCheckBox().isSelected()) {
                 proteins = Double.parseDouble(adminWindow.getNewProteinField().getText());
             }
-            if(adminWindow.getModifyFatCheckBox().isSelected()) {
+            if (adminWindow.getModifyFatCheckBox().isSelected()) {
                 fats = Double.parseDouble(adminWindow.getNewFatField().getText());
             }
-            if(adminWindow.getModifySodiumCheckBox().isSelected()) {
+            if (adminWindow.getModifySodiumCheckBox().isSelected()) {
                 sodium = Double.parseDouble(adminWindow.getNewSodiumField().getText());
             }
-            if(adminWindow.getModifyPriceCheckBox().isSelected()) {
+            if (adminWindow.getModifyPriceCheckBox().isSelected()) {
                 price = Double.parseDouble(adminWindow.getNewPriceField().getText());
             }
 
             if (deliveryService.getMenuItemsCollection().contains(dummy))
                 deliveryService.getMenuItemsCollection().remove(dummy);
-            else
-                throw new Exception("Error! The item doesn't exist anymore in the table. Try to refresh it!");
+            else {
+                //check if composite product
+                CompositeProduct dummyComposite = new CompositeProduct(dummy.getTitle());
 
+                if(deliveryService.getMenuItemsCollection().contains(dummyComposite))
+                    deliveryService.getMenuItemsCollection().remove(dummyComposite);
+                else
+                    throw new Exception("Error! The item doesn't exist anymore in the table. Try to refresh it!");
+            }
 
             MenuItem toAdd = new BaseProduct(productTitle, calories, rating, proteins, fats, sodium, price);
 
@@ -257,7 +269,6 @@ public class AdminCRUDController implements ActionListener {
         } catch (Exception e) {
             ErrorPrompt errorPrompt = new ErrorPrompt(e.getMessage());
         }
-
 
         adminWindow.getEditPanel().setVisible(false);
         adminWindow.getOperationChoicePanel().setVisible(true);
@@ -282,5 +293,4 @@ public class AdminCRUDController implements ActionListener {
 
         return  dummy;
     }
-
 }

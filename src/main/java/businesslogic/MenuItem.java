@@ -3,7 +3,7 @@ package businesslogic;
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class MenuItem implements Serializable {
+public abstract class MenuItem implements Serializable, Cloneable {
     protected String title;
     protected double rating;
     protected double calories;
@@ -27,7 +27,7 @@ public abstract class MenuItem implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, rating, calories, proteins, fats, sodium, price);
+        return Objects.hash(title);
     }
 
     @Override
@@ -41,6 +41,11 @@ public abstract class MenuItem implements Serializable {
                 ", sodium=" + sodium +
                 ", price=" + price +
                 '}';
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public String getTitle() {

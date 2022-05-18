@@ -127,6 +127,8 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
     /**
      * Creates a new order based on the chosen products
+     * The orderedMenuItems is cloned in another object that will be stored into orders
+     * This way a user could perform multiple orders at once
      */
     @Override
     public void createNewOrder(int clientID) throws Exception{
@@ -138,12 +140,13 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
         Order newOrder = new Order(orderID, clientID);
 
-        orderMenuItemsMap.put(newOrder, orderedMenuItems);
-        ordersToDeliver.put(newOrder, orderedMenuItems);
+        Collection<MenuItem> orderedMenuItemsClone = cloneMenuItemsCollection(orderedMenuItems);
+
+        orderMenuItemsMap.put(newOrder, orderedMenuItemsClone);
+        ordersToDeliver.put(newOrder, orderedMenuItemsClone);
 
         generateBill(newOrder, orderedMenuItems);
 
-        //TODO: add to ordersToDeliver
         String name = "name";
         Integer oldValue = 0;
         propertyChangeSupport.firePropertyChange("added order", this.ordersToDeliver, newOrder);
@@ -393,5 +396,21 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
     public Map<Order, Collection<MenuItem>> getOrdersToDeliver() {
         return ordersToDeliver;
+    }
+
+    /**
+     * TODO: check if it works
+     * @param menuItems
+     * @return
+     * @throws CloneNotSupportedException
+     */
+    public Collection<MenuItem> cloneMenuItemsCollection(Collection<MenuItem> menuItems) throws CloneNotSupportedException {
+        Collection<MenuItem> toReturn = new HashSet<>(menuItems.size());
+
+        for(MenuItem menuItem : menuItems) {
+            MenuItem newItem = (MenuItem) menuItem.clone();
+            toReturn.add(newItem);
+        }
+        return toReturn;
     }
 }
