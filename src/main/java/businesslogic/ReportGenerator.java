@@ -14,7 +14,7 @@ public class ReportGenerator {
     private String startingHour;
     private String endHour;
     private int min_ordered_times;
-    private int min_order_value;
+    private double min_order_value;
     private String day;
     private ArrayList<String> information;
 
@@ -135,8 +135,40 @@ public class ReportGenerator {
         writeToTxt(fileName, linesToWrite);
     }
 
-    public void generateType3() {
-        //TODO
+    /**
+     * Report regarding fidel clients
+     */
+    public void generateType3() throws Exception {
+        this.min_ordered_times = Integer.parseInt(information.get(0));
+        this.min_order_value = Double.parseDouble(information.get(1));
+
+        //filter by value
+        Set<Map.Entry<Integer, Long>> validClientsEntries = deliveryService.getOrderMenuItemsMap().entrySet().stream()
+                .filter(s-> {
+                    double value = 0;
+                    for(MenuItem menuItem : s.getValue()) {
+                        value += menuItem.getPrice();
+                    }
+                    return value >= min_order_value;
+                }).map(Map.Entry::getKey).collect(Collectors.groupingBy(
+                        Order::getClientID,
+                        Collectors.counting()
+                )).entrySet().stream()
+                .filter(s -> {
+                    System.out.println(s.getKey().toString() + " " + s.getValue().toString());
+                    return s.getValue() >= min_ordered_times;
+                }).collect(Collectors.toSet());
+
+        ArrayList<String> linesToWrite = new ArrayList<>();
+        linesToWrite.add("FIDEL CLIENTS REPORT\n");
+        linesToWrite.add("Client that ordered more than: " + min_ordered_times+ " times");
+        linesToWrite.add("With value more than: " + min_order_value);
+        linesToWrite.add("______________________________\n");
+
+        clientsEntriesToLine(validClientsEntries, linesToWrite);
+        String fileName = "TYPE_3_REPORT_" + LocalDateTime.now().getNano();
+        writeToTxt(fileName, linesToWrite);
+
     }
 
     /**
@@ -203,13 +235,19 @@ public class ReportGenerator {
 
     public <K, V> void productsEntriesToLine(Set<Map.Entry<K, V>> mapEntries, ArrayList<String> initialLines) {
 
-        int i = 1;
-
         for(Map.Entry<K, V> entry : mapEntries) {
             String newLine = "Menu Item: " + entry.getKey().toString();
             newLine += " --> number of times " + entry.getValue().toString() + "\n";
             initialLines.add(newLine);
-            i++;
+        }
+
+    }
+
+    public <K, V> void clientsEntriesToLine(Set<Map.Entry<K, V>> mapEntries, ArrayList<String> initialLines) {
+
+        for(Map.Entry<K, V> entry : mapEntries) {
+            String newLine = "Client ID: " + entry.getKey().toString();
+            initialLines.add(newLine);
         }
 
     }

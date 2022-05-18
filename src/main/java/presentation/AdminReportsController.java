@@ -71,8 +71,8 @@ public class AdminReportsController implements ActionListener {
         try {
             ArrayList<String> information = new ArrayList<>(2);
 
-            if (adminWindow.getT3MinNrOfTimesField().getText().equals("") ||
-                    adminWindow.getMinPriceField().getText().equals("")) {
+            if (adminWindow.getT3MinNrOfTimesField().getText().equals("Input min nr. of times") ||
+                    adminWindow.getMinPriceField().getText().equals("Input min price")) {
                 throw new Exception("Error: you must complete all the text fields");
             }
 

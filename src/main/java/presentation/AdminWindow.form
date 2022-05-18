@@ -809,6 +809,14 @@
                           <text value="Input min price"/>
                         </properties>
                       </component>
+                      <component id="aff81" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="--&gt; and the order price was higher than a specified value"/>
+                        </properties>
+                      </component>
                       <component id="f6fa4" class="javax.swing.JTextField" binding="t3MinNrOfTimesField">
                         <constraints>
                           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="0" indent="0" use-parent-layout="false">
@@ -817,14 +825,6 @@
                         </constraints>
                         <properties>
                           <text value="Input min nr. of times"/>
-                        </properties>
-                      </component>
-                      <component id="aff81" class="javax.swing.JLabel">
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <text value="--&gt; and the order price was higher than a specified value"/>
                         </properties>
                       </component>
                     </children>
