@@ -3,6 +3,7 @@ package businesslogic;
 import utils.AlreadyImportedInitialProducts;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -26,7 +27,7 @@ public interface IDeliveryServiceProcessing {
      * Admin operation:
      * - generate 4 types of reports
      */
-    void generateReport(int type, Collection<String> information);
+    void generateReport(int type, ArrayList<String> information) throws Exception;
 
     /**
      * Client operation

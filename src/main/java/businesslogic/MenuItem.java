@@ -35,11 +35,6 @@ public abstract class MenuItem implements Serializable, Cloneable {
         return "MenuItem{" +
                 "title='" + title + '\'' +
                 ", rating=" + rating +
-                ", calories=" + calories +
-                ", proteins=" + proteins +
-                ", fats=" + fats +
-                ", sodium=" + sodium +
-                ", price=" + price +
                 '}';
     }
 

@@ -128,7 +128,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
 
     @Override
-    public void generateReport(int type, Collection<String> information) {
+    public void generateReport(int type, ArrayList<String> information) throws Exception{
         ReportGenerator reportGenerator = new ReportGenerator(type, information);
         reportGenerator.generateReport();
     }
@@ -429,6 +429,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
     public Collection<MenuItem> getOrderedMenuItems() {
         return orderedMenuItems;
+    }
+
+    public Map<Order, Collection<MenuItem>> getOrderMenuItemsMap() {
+        return orderMenuItemsMap;
     }
 
     //TODO: Define Well-formed Method

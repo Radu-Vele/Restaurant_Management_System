@@ -42,6 +42,15 @@ public class Order implements Serializable {
         return clientID;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "orderID=" + orderID +
+                ", clientID=" + clientID +
+                ", orderDate=" + orderDate +
+                '}';
+    }
+
     public Date getOrderDate() {
         return orderDate;
     }

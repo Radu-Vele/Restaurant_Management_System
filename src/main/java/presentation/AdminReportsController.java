@@ -34,7 +34,7 @@ public class AdminReportsController implements ActionListener {
 
     public void generateType1() {
         try {
-            Collection<String> information = new ArrayList<String>(2);
+            ArrayList<String> information = new ArrayList<String>(2);
 
             if (adminWindow.getEndHourField().getText().equals("") ||
                     adminWindow.getStartingHourField().getText().equals("")) {
@@ -52,7 +52,7 @@ public class AdminReportsController implements ActionListener {
 
     public void generateType2() {
         try {
-            Collection<String> information = new ArrayList<>(1);
+            ArrayList<String> information = new ArrayList<>(1);
 
             if(adminWindow.getMinNrTimesField().getText().equals("")) {
                 throw new Exception("Error: you must complete all the text fields");
@@ -69,7 +69,7 @@ public class AdminReportsController implements ActionListener {
 
     public void generateType3() {
         try {
-            Collection<String> information = new ArrayList<>(2);
+            ArrayList<String> information = new ArrayList<>(2);
 
             if (adminWindow.getT3MinNrOfTimesField().getText().equals("") ||
                     adminWindow.getMinPriceField().getText().equals("")) {
@@ -90,7 +90,7 @@ public class AdminReportsController implements ActionListener {
 
     public void generateType4() {
         try {
-            Collection<String> information = new ArrayList<>(1);
+            ArrayList<String> information = new ArrayList<>(1);
 
             if(adminWindow.getWantedDayField().getText().equals("")) {
                 throw new Exception("Error: you must complete all the text fields");

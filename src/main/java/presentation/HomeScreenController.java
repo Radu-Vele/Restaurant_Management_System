@@ -3,19 +3,11 @@ package presentation;
 import businesslogic.AccountHolder;
 import businesslogic.DeliveryService;
 import businesslogic.LoginService;
-import businesslogic.MenuItem;
 import utils.IncorrectInputException;
 import utils.NoSuchAccountException;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.EOFException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Controller class for the Log in Window
