@@ -1,7 +1,6 @@
 package presentation;
 
 import businesslogic.BaseProduct;
-import businesslogic.CompositeProduct;
 import businesslogic.DeliveryService;
 import businesslogic.MenuItem;
 
@@ -49,7 +48,7 @@ public class AdminMenuController implements ActionListener {
     }
 
     public void populateExistingItemsTable() {
-        String[][] data = deliveryService.setToTable("");
+        String[][] data = deliveryService.returnAsTable(deliveryService.getMenuItemsCollection());
         String[] columnHeadings = {"Title", "Rating", "Calories", "Protein", "Fats", "Sodium", "Price"};
         DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnHeadings);
         JTable table = adminWindow.getExistingProductsTable();

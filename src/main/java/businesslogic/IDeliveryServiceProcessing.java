@@ -3,6 +3,7 @@ package businesslogic;
 import utils.AlreadyImportedInitialProducts;
 
 import java.io.FileNotFoundException;
+import java.util.Collection;
 
 /**
  * Delivery service interface
@@ -25,13 +26,13 @@ public interface IDeliveryServiceProcessing {
      * Admin operation:
      * - generate 4 types of reports
      */
-    void generateReport();
+    void generateReport(int type, Collection<String> information);
 
     /**
      * Client operation
      * - searching for products
      * - uses an algorithm for computing the price
-     * - generates a bill in a .txt file
+     * - generates a bill
      */
     void createNewOrder(int clientID) throws Exception;
 

@@ -9,7 +9,7 @@ import java.awt.event.WindowListener;
 public class HomeScreen extends JFrame{
     private JPanel mainPanel;
     private JTextField usernameField;
-    private JTextField passwordField;
+    private JPasswordField passwordField;
     private JLabel usernameLabel;
     private JLabel passwordLabel;
     private JButton logInButton;
@@ -43,7 +43,7 @@ public class HomeScreen extends JFrame{
         return usernameField;
     }
 
-    public JTextField getPasswordField() {
+    public JPasswordField getPasswordField() {
         return passwordField;
     }
 

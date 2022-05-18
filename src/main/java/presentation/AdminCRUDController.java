@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 
 /**
  * Controller class for the operation that deal with adding/modifying and deleting products by the admin
@@ -41,12 +42,15 @@ public class AdminCRUDController implements ActionListener {
         }
         else if(e.getSource().equals(adminWindow.getAddDescribedProductButton())) {
             addProduct();
+            populateProductsTable();
         }
         else if(e.getSource().equals(adminWindow.getDeleteDescribedProductButton())) {
             deleteProduct();
+            populateProductsTable();
         }
         else if(e.getSource().equals(adminWindow.getModifyDescribedProductButton())) {
             modifyProduct();
+            populateProductsTable();
         }
         else if (e.getSource().equals(adminWindow.getRefreshProductsTableButton())) {
             populateProductsTable();
@@ -166,7 +170,8 @@ public class AdminCRUDController implements ActionListener {
 
     public void populateProductsTable() {
         String filterString = adminWindow.getFilterTextField().getText();
-        String[][] data = deliveryService.setToTable(filterString);
+        Collection<MenuItem> filteredMenuItems = deliveryService.filterByTitle(deliveryService.getMenuItemsCollection(), filterString);
+        String[][] data = deliveryService.returnAsTable(filteredMenuItems);
         String[] columnHeadings = {"Title", "Rating", "Calories", "Protein", "Fats", "Sodium", "Price"};
         DefaultTableModel defaultTableModel = new DefaultTableModel(data, columnHeadings);
         JTable table = adminWindow.getProductsTable();

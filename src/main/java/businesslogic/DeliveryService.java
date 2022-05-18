@@ -2,16 +2,13 @@ package businesslogic;
 
 
 import dataaccess.Serializer;
-import jdk.jfr.Event;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import presentation.EmployeeController;
 import presentation.HomeScreenController;
 import utils.AlreadyImportedInitialProducts;
 
-import java.awt.*;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
@@ -31,11 +28,13 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     private Map<Order, Collection<MenuItem>> ordersToDeliver;
 
     private PropertyChangeSupport propertyChangeSupport;
-    private PropertyChangeListener propertyChangeListener;
 
     private static DeliveryService deliveryServiceInstance;
 
 
+    /**
+     * Singleton design pattern used
+     */
     private DeliveryService() {
         orderMenuItemsMap = new LinkedHashMap<>(); //keeps the right order of the inserted order
         menuItemsCollection = new HashSet<>(); //suitable for searching, no duplicates
@@ -55,6 +54,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
     /**
      * Imports products from a csv files and populates the HashSet menuItemsCollection
+     * Uses stream processing
      * @throws FileNotFoundException
      */
     @Override
@@ -62,6 +62,7 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         if(!menuItemsCollection.isEmpty()) {
             throw new AlreadyImportedInitialProducts();
         }
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("src/products.csv")));
         menuItemsCollection = reader.lines()
                 .skip(1)
@@ -120,9 +121,16 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         }
     }
 
+    public void addProduct(MenuItem menuItem) throws Exception {
+        if(!menuItemsCollection.add(menuItem)) {
+            throw new Exception("A product with the same title already exists. Try to edit it");
+        }
+    }
+
     @Override
-    public void generateReport() {
-        //TODO: use lambda expressions and stream processing to generate the 4 types of reports
+    public void generateReport(int type, Collection<String> information) {
+        ReportGenerator reportGenerator = new ReportGenerator(type, information);
+        reportGenerator.generateReport();
     }
 
     /**
@@ -147,11 +155,16 @@ public class DeliveryService implements IDeliveryServiceProcessing{
 
         generateBill(newOrder, orderedMenuItems);
 
-        String name = "name";
-        Integer oldValue = 0;
+        //Notify observers
         propertyChangeSupport.firePropertyChange("added order", this.ordersToDeliver, newOrder);
     }
 
+    /**
+     * Filters the collection of menu items given as parameter.
+     * @param menuItems
+     * @param title - valid elements' titles in the collection must contain this string
+     * @return the filtered collection
+     */
     public Collection<MenuItem> filterByTitle(Collection<MenuItem> menuItems, String title) {
         Collection<MenuItem> result;
         if(title.equals("")) {
@@ -166,10 +179,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
     }
 
     /**
-     *
+     * Filters the collection of menu items given as parameter.
      * @param menuItems
-     * @param value
-     * @return
+     * @param value - valid elements in the collection must be greater or equal than it
+     * @return the filtered collection
      */
     public Collection<MenuItem> filterGreaterThanDouble(Collection<MenuItem> menuItems, double value, String argument) {
         Collection<MenuItem> result = null;
@@ -195,6 +208,12 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         return result;
     }
 
+    /**
+     * Filters the collection of menu items given as parameter.
+     * @param menuItems
+     * @param value - valid elements in the collection must be less or equal than it
+     * @return the filtered collection
+     */
     public Collection<MenuItem> filterLessThanDouble(Collection<MenuItem> menuItems, double value, String argument) {
         Collection<MenuItem> result = null;
         switch(argument) {
@@ -225,8 +244,6 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         propertyChangeSupport.addPropertyChangeListener(propertyChangeListener);
     }
 
-    //TODO: Define Well-formed Method
-
     /**
      * Stores the serialized data from the class in a txt file using the data access package
      */
@@ -249,17 +266,6 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         orderMenuItemsMap = serializer1.deserialize();
         Serializer<Map<Order, Collection<MenuItem>>> serializer2 = new Serializer<>(this.ordersToDeliver, "ordersToDeliver.txt");
         ordersToDeliver = serializer2.deserialize();
-
-    }
-
-    public void addProduct(MenuItem menuItem) throws Exception {
-        if(!menuItemsCollection.add(menuItem)) {
-            throw new Exception("A product with the same title already exists. Try to edit it");
-        }
-    }
-
-    public Collection<MenuItem> getMenuItemsCollection() {
-        return menuItemsCollection;
     }
 
     /**
@@ -270,10 +276,6 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         Collection<MenuItem> filteredMenuItemHashSet =  filterByTitle(menuItemsCollection, filteringName);
         String[][] toReturn = returnAsTable(filteredMenuItemHashSet);
         return toReturn;
-    }
-
-    public void addChosenItem(MenuItem menuItem) {
-        this.chosenMenuItems.add(menuItem);
     }
 
     /**
@@ -303,6 +305,11 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         return chosenMenuItems;
     }
 
+    /**
+     * A composite product is created and added to the menu
+     * @param title
+     * @throws Exception
+     */
     public void addCompositeProduct(String title) throws Exception{
         CompositeProduct compositeProduct = new CompositeProduct(title);
 
@@ -318,10 +325,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         menuItemsCollection.add(compositeProduct);
     }
 
-    public Collection<MenuItem> getOrderedMenuItems() {
-        return orderedMenuItems;
-    }
-
+    /**
+     * Computes the price of an order.
+     * @return price value as double
+     */
     public double computeOrderPrice() {
         double price = 0;
         for(MenuItem menuItem : orderedMenuItems) {
@@ -394,12 +401,8 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         }
     }
 
-    public Map<Order, Collection<MenuItem>> getOrdersToDeliver() {
-        return ordersToDeliver;
-    }
-
     /**
-     * TODO: check if it works
+     * Clones the menuItems collection
      * @param menuItems
      * @return
      * @throws CloneNotSupportedException
@@ -413,4 +416,20 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         }
         return toReturn;
     }
+
+    public void addChosenItem(MenuItem menuItem) {
+        this.chosenMenuItems.add(menuItem);
+    }
+
+    public Collection<MenuItem> getMenuItemsCollection() {
+        return menuItemsCollection;
+    }
+    public Map<Order, Collection<MenuItem>> getOrdersToDeliver() {
+        return ordersToDeliver;
+    }
+    public Collection<MenuItem> getOrderedMenuItems() {
+        return orderedMenuItems;
+    }
+
+    //TODO: Define Well-formed Method
 }

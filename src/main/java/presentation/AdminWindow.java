@@ -58,9 +58,25 @@ public class AdminWindow extends JFrame{
     private JButton createNewMenuItemButton;
     private JTextField compositeTitleField;
     private JLabel newItemSuccess;
+    private JPanel type1Panel;
+    private JPanel type2Panel;
+    private JPanel type3Panel;
+    private JPanel type4Panel;
+    private JButton generateType1Button;
+    private JButton generateType2Button;
+    private JButton generateType3Button;
+    private JButton generateType4Button;
+    private JTextField startingHourField;
+    private JTextField endHourField;
+    private JTextField minNrTimesField;
+    private JTextField minPriceField;
+    private JTextField t3MinNrOfTimesField;
+    private JTextField wantedDayField;
+    private JLabel reportsSuccessLabel;
 
     private AdminCRUDController adminController;
     private AdminMenuController adminMenuController;
+    private AdminReportsController adminReportsController;
 
     public AdminWindow() {
         setContentPane(mainPanel);
@@ -71,6 +87,7 @@ public class AdminWindow extends JFrame{
         setTitle("Administrator operations");
         adminController = new AdminCRUDController(this);
         adminMenuController = new AdminMenuController(this);
+        adminReportsController = new AdminReportsController(this);
 
         importInitialSetOfButton.addActionListener(adminController);
         importLabel.setText("");
@@ -111,6 +128,10 @@ public class AdminWindow extends JFrame{
         clearSelectedItemsButton.addActionListener(adminMenuController);
         createNewMenuItemButton.addActionListener(adminMenuController);
 
+        generateType1Button.addActionListener(adminReportsController);
+        generateType2Button.addActionListener(adminReportsController);
+        generateType3Button.addActionListener(adminReportsController);
+        generateType4Button.addActionListener(adminReportsController);
 
         newTitleField.setVisible(false);
         newCaloriesField.setVisible(false);
@@ -120,6 +141,7 @@ public class AdminWindow extends JFrame{
         newProteinField.setVisible(false);
         newSodiumField.setVisible(false);
         newItemSuccess.setVisible(false);
+        reportsSuccessLabel.setVisible(false);
     }
 
     public JButton getImportInitialSetOfButton() {
@@ -312,5 +334,49 @@ public class AdminWindow extends JFrame{
 
     public JLabel getNewItemSuccess() {
         return newItemSuccess;
+    }
+
+    public JButton getGenerateType1Button() {
+        return generateType1Button;
+    }
+
+    public JButton getGenerateType2Button() {
+        return generateType2Button;
+    }
+
+    public JButton getGenerateType3Button() {
+        return generateType3Button;
+    }
+
+    public JButton getGenerateType4Button() {
+        return generateType4Button;
+    }
+
+    public JTextField getStartingHourField() {
+        return startingHourField;
+    }
+
+    public JTextField getEndHourField() {
+        return endHourField;
+    }
+
+    public JTextField getMinNrTimesField() {
+        return minNrTimesField;
+    }
+
+    public JTextField getMinPriceField() {
+        return minPriceField;
+    }
+
+    public JTextField getT3MinNrOfTimesField() {
+        return t3MinNrOfTimesField;
+    }
+
+    public JTextField getWantedDayField() {
+        return wantedDayField;
+    }
+
+    public JLabel getReportsSuccessLabel() {
+        return reportsSuccessLabel;
     }
 }
