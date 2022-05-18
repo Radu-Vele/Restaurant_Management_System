@@ -63,6 +63,8 @@ public class ReportGenerator {
         final int endH = Integer.parseInt(endingComponents[0]);
         final int endMin = Integer.parseInt(endingComponents[1]);
 
+        checkCorrectHourFormat(startH, endH, startMin, endMin);
+
         Map<Order, Collection<MenuItem>> map = deliveryService.getOrderMenuItemsMap();
         Set<Map.Entry<Order, Collection<MenuItem>>> entries = map.entrySet();
 
@@ -131,11 +133,26 @@ public class ReportGenerator {
         for(Map.Entry<K, V> entry : mapEntries) {
             String newLine = "Order " + i + ": ";
             newLine += entry.getKey().toString();
-            newLine += "Menu Items Ordered: " + entry.getValue().toString();
+            newLine += "\n -> Menu Items Ordered: " + entry.getValue().toString() + "\n";
             initialLines.add(newLine);
             i++;
         }
 
         return initialLines;
+    }
+
+    public void checkCorrectHourFormat(int hour1, int hour2, int min1, int min2) throws Exception{
+        if(hour1 < 0 || hour1 > 23) {
+            throw new Exception("Error! Invalid time format");
+        }
+        if(hour2 < 0 || hour2 > 23) {
+            throw new Exception("Error! Invalid time format");
+        }
+        if(min1 < 0 || min1 > 59) {
+            throw new Exception("Error! Invalid time format");
+        }
+        if(min2 < 0 || min2 < 59) {
+            throw new Exception("Error! Invalid time format");
+        }
     }
 }

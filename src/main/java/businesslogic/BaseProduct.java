@@ -16,12 +16,6 @@ public class BaseProduct extends MenuItem{
     public String toString() {
         return "{" +
                 "title='" + title + '\'' +
-                ", rating=" + rating +
-                ", calories=" + calories +
-                ", proteins=" + proteins +
-                ", fats=" + fats +
-                ", sodium=" + sodium +
-                ", price=" + price +
                 '}';
     }
 
