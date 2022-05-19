@@ -54,7 +54,6 @@ public class ClientController implements ActionListener {
             clearAllOrderItems();
             populateChosenProductTable();
             computePrice();
-            //TODO: make it work to make multiple orders in one instance
         }
     }
 

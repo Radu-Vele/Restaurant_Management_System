@@ -19,16 +19,24 @@ public class AdminReportsController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(adminWindow.getGenerateType1Button())) {
+            adminWindow.getReportsSuccessLabel().setVisible(false);
             generateType1();
+            adminWindow.getReportsSuccessLabel().setVisible(true);
         }
         else if(e.getSource().equals(adminWindow.getGenerateType2Button())) {
+            adminWindow.getReportsSuccessLabel().setVisible(false);
             generateType2();
+            adminWindow.getReportsSuccessLabel().setVisible(true);
         }
         else if(e.getSource().equals(adminWindow.getGenerateType3Button())) {
+            adminWindow.getReportsSuccessLabel().setVisible(false);
             generateType3();
+            adminWindow.getReportsSuccessLabel().setVisible(true);
         }
         else if (e.getSource().equals(adminWindow.getGenerateType4Button())) {
+            adminWindow.getReportsSuccessLabel().setVisible(false);
             generateType4();
+            adminWindow.getReportsSuccessLabel().setVisible(true);
         }
     }
 

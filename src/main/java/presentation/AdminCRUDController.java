@@ -146,7 +146,6 @@ public class AdminCRUDController implements ActionListener {
     }
 
     public void deleteProduct() {
-        //TODO: make it work for composite products
         try {
             MenuItem toDelete = getProductFromSelectedLine();
             if(deliveryService.getMenuItemsCollection().contains(toDelete)) {

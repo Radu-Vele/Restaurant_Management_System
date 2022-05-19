@@ -435,5 +435,10 @@ public class DeliveryService implements IDeliveryServiceProcessing{
         return orderMenuItemsMap;
     }
 
-    //TODO: Define Well-formed Method
+    protected boolean wellFormed() {
+        if(menuItemsCollection.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

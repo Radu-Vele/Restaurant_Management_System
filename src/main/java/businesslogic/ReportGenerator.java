@@ -206,7 +206,7 @@ public class ReportGenerator {
         linesToWrite.add("______________________________\n");
         productsEntriesToLine(frequencyMap.entrySet(), linesToWrite);
 
-        String fileName = "TYPE_3_REPORT_" + LocalDateTime.now().getNano();
+        String fileName = "TYPE_4_REPORT_" + LocalDateTime.now().getNano();
         writeToTxt(fileName, linesToWrite);
     }
 
@@ -245,6 +245,7 @@ public class ReportGenerator {
 
     public <K, V> void clientsEntriesToLine(Set<Map.Entry<K, V>> mapEntries, ArrayList<String> initialLines) {
 
+        //TODO: show usernames
         for(Map.Entry<K, V> entry : mapEntries) {
             String newLine = "Client ID: " + entry.getKey().toString();
             initialLines.add(newLine);

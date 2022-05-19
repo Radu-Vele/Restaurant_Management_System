@@ -67,11 +67,15 @@ public class EmployeeController implements PropertyChangeListener, ActionListene
 
     public void markSelectedAsDone() {
         String orderToDelete = (String) employeeWindow.getOrdersList().getSelectedValue();
-
+        boolean found = false;
         for(Map.Entry<Order, Collection<MenuItem>> entry : deliveryService.getOrdersToDeliver().entrySet()) {
             if(entry.getKey().getOrderID() == Integer.parseInt(orderToDelete.substring(0, 1))) {
                 deliveryService.getOrdersToDeliver().remove(entry.getKey());
+                found = true;
             }
+        }
+        if(!found) {
+            ErrorPrompt errorPrompt = new ErrorPrompt("You must select an order to mark as done.");
         }
     }
 }
